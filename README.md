@@ -1,5 +1,7 @@
 ## NumberPicker for Android
 
+[![endorse](http://api.coderwall.com/mrn/endorsecount.png)](http://coderwall.com/mrn)
+
 This project is an Android library project for a NumberPicker widget. This library has been tested on Android 2.1 through Android 4.0. The repository contains three parts
 described below. All source code is licensed under the Apache 2.0 License.
 
