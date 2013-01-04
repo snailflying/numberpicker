@@ -11,7 +11,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <application>
+    <application android:allowBackup="false">
         <uses-library android:name="android.test.runner" />
     </application>
 
