@@ -56,6 +56,7 @@ public class NumberPickerSample extends Activity implements NumberPickerDialog.O
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void onNumberSet(int number) {
         Log.d(TAG, "Number selected: " + number);
     }
