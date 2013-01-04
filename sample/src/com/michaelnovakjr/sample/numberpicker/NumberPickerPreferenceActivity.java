@@ -21,6 +21,7 @@ import android.preference.PreferenceManager;
 
 public class NumberPickerPreferenceActivity extends PreferenceActivity {
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
