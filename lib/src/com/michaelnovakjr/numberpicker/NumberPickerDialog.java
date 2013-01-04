@@ -34,6 +34,7 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
 
         setButton(BUTTON_POSITIVE, context.getText(R.string.dialog_set_number), this);
         setButton(BUTTON_NEGATIVE, context.getText(R.string.dialog_cancel), (OnClickListener) null);
+        setTitle(context.getText(R.string.dialog_picker_title));
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_number_picker, null);
