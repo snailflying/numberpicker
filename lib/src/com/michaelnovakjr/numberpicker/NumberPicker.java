@@ -175,9 +175,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * @param end the end of the range (inclusive)
      */
     public void setRange(int start, int end) {
-        mStart = start;
-        mEnd = end;
-        mCurrent = start;
+        setRangeInternal(start, end);
         updateView();
     }
 
@@ -200,11 +198,16 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
      * @param displayedValues the values displayed to the user.
      */
     public void setRange(int start, int end, String[] displayedValues) {
+        setRangeInternal(start, end);
         mDisplayedValues = displayedValues;
+        updateView();
+    }
+    
+    private void setRangeInternal(int start, int end) {
+        if (end < start) throw new IllegalArgumentException("End value cannot be less than the start value.");
         mStart = start;
         mEnd = end;
         mCurrent = start;
-        updateView();
     }
 
     public void setCurrent(int current) {
