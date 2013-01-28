@@ -103,6 +103,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     protected Formatter mFormatter;
     protected boolean mWrap;
     protected long mSpeed = 300;
+    private int mNumMaxDigitChars; 
 
     private boolean mIncrement;
     private boolean mDecrement;
@@ -136,26 +137,27 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setOnFocusChangeListener(this);
         mText.setOnEditorActionListener(this);
         mText.setFilters(new InputFilter[] {inputFilter});
-        mText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
 
         if (!isEnabled()) {
             setEnabled(false);
         }
 
         TypedArray a = context.obtainStyledAttributes( attrs, R.styleable.numberpicker );
-        mStart = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
-        mEnd = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
-        
-        if (mEnd < mStart) {
-            final int t = mStart;
-            mStart = mEnd;
-            mEnd = t;
-        }
         
         mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
-        mCurrent = 	a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
-        mCurrent = Math.max( mStart, Math.min( mCurrent, mEnd ) );
-        mText.setText( "" + mCurrent );
+        
+        int start = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
+        int end = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
+        int current = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
+        if (end < start) {
+            final int t = start;
+            start = end;
+            end = t;
+        }
+        setRangeInternal(start, end);
+        setCurrentInternal(constrain(current, start, end));
+        updateTextInputType();
+        updateView();
     }
 
     @Override
@@ -215,6 +217,19 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mStart = start;
         mEnd = end;
         mCurrent = start;
+        mNumMaxDigitChars = Integer.toString(Math.max(Math.abs(mStart), Math.abs(mEnd))).length();
+        updateTextInputType();
+    }
+
+    private boolean isSignedNumberAllowed() {
+        return (mStart < 0);
+    }
+
+    private void updateTextInputType() {
+        int inputType = InputType.TYPE_CLASS_NUMBER;
+        if (isSignedNumberAllowed())
+            inputType |= InputType.TYPE_NUMBER_FLAG_SIGNED;
+        mText.setInputType(inputType);
     }
 
     public void setCurrent(int current) {
@@ -294,14 +309,17 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mText.setSelection(mText.getText().length());
     }
 
+    private static int constrain(int x, int min, int max) {
+        return Math.min(Math.max(x, min), max);
+    }
+
     private void validateCurrentView(CharSequence str) {
         int val = getSelectedPos(str.toString());
-        if ((val >= mStart) && (val <= mEnd)) {
-            if (mCurrent != val) {
-                mPrevious = mCurrent;
-                mCurrent = val;
-                notifyChange();
-            }
+        val = constrain(val, mStart, mEnd);
+        if (mCurrent != val) {
+            mPrevious = mCurrent;
+            mCurrent = val;
+            notifyChange();
         }
         updateView();
     }
@@ -372,6 +390,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
     };
 
+    private static final char[] SIGNED_DIGIT_CHARACTERS = new char[] {
+            '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-'
+    };
+
     private NumberPickerButton mIncrementButton;
     private NumberPickerButton mDecrementButton;
 
@@ -400,13 +422,20 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // XXX This doesn't allow for range limits when controlled by a
         // soft input method!
+        @Override
         public int getInputType() {
-            return InputType.TYPE_CLASS_NUMBER;
+            if (isSignedNumberAllowed())
+                return InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED;
+            else
+                return InputType.TYPE_CLASS_NUMBER;
         }
 
         @Override
         protected char[] getAcceptedChars() {
-            return DIGIT_CHARACTERS;
+            if (isSignedNumberAllowed())
+                return SIGNED_DIGIT_CHARACTERS;
+            else
+                return DIGIT_CHARACTERS;
         }
 
         @Override
@@ -425,24 +454,81 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             if ("".equals(result)) {
                 return result;
             }
-            int val = getSelectedPos(result);
-
-            /* Ensure the user can't type in a value greater
-             * than the max allowed. We have to allow less than min
-             * as the user might want to delete some numbers
-             * and then type a new number.
-             */
-            if (val > mEnd) {
-                return "";
-            } else {
-                return filtered;
+            if (isSignedNumberAllowed()) {
+                /* 
+                 * Don't allow the sign character if destination 
+                 * position is not front of the text 
+                 */
+                if (filtered.length() > 0 && filtered.charAt(0) == '-') {
+                    if (dstart != 0) {
+                        return "";
+                    }
+                }
+                final int numSigneChars = countChar(result, '-');
+                /* Don't allow multiple sign characters */
+                if (numSigneChars > 1) {
+                    return "";
+                }
+                /* Don't allow any characters before sign character */
+                if (numSigneChars > 0 && result.charAt(0) != '-') {
+                    return "";
+                }
             }
+
+            if (mDisplayedValues == null) {
+                int len = result.length();
+                if (len > 0 && result.charAt(0) == '-') {
+                    if (len > (mNumMaxDigitChars + 1)) {
+                        return "";
+                    }
+                }
+                else {
+                    if (len > (mNumMaxDigitChars)) {
+                        return "";
+                    }
+                }
+                return filtered;
+            } else {
+                final int val = getSelectedPos(result);
+                
+                /* Ensure the user can't type in a value greater
+                 * than the max allowed. We have to allow less than min
+                 * as the user might want to delete some numbers
+                 * and then type a new number.
+                 */
+                if (val > mEnd) {
+                    return "";
+                } else {
+                    return filtered;
+                }
+            }
+        }
+
+        private int countChar(String str, char c) {
+            final int len = str.length();
+            int count = 0;
+            int offset = 0;
+            while (offset < len) {
+                final int index = str.indexOf(c, offset);
+                if (index < 0) 
+                    break;
+                offset += (index + 1);
+                count++;
+            }
+            return count;
         }
     }
 
     private int getSelectedPos(String str) {
         if (mDisplayedValues == null) {
-            return Integer.parseInt(str);
+            if (str.equals("-")) {
+                return 0;
+            }
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException e) {
+                return mCurrent;
+            }
         } else {
             for (int i = 0; i < mDisplayedValues.length; i++) {
 
