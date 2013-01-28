@@ -208,18 +208,21 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     }
 
     public void setCurrent(int current) {
-        if (mEnd < current) throw new IllegalArgumentException("Current value cannot be greater than the range end.");
-
-        mCurrent = current;
+        setCurrentInternal(current);
         updateView();
     }
 
     public void setCurrentAndNotify(int current) {
-        mCurrent = current;
+        setCurrentInternal(current);
         notifyChange();
         updateView();
     }
 
+    private void setCurrentInternal(int current) {
+        if (mStart > current) throw new IllegalArgumentException("Current value cannot be less than the range start.");
+        if (mEnd < current) throw new IllegalArgumentException("Current value cannot be greater than the range end.");
+        mCurrent = current;
+    }
 
     /**
      * The speed (in milliseconds) at which the numbers will scroll
