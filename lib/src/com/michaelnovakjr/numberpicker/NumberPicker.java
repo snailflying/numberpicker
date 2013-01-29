@@ -296,17 +296,27 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     }
 
     protected void updateView() {
+        int selectPos;
 
         /* If we don't have displayed values then use the
          * current number else find the correct value in the
          * displayed values for the current number.
          */
         if (mDisplayedValues == null) {
+            int curSelectedPos = mText.getSelectionStart();
+            int curTextLength = mText.getText().length();
+            
             mText.setText(formatNumber(mCurrent));
+            
+            /* Preserve previous cursor position (right justified) */
+            selectPos = mText.getText().length();
+            selectPos -= (curTextLength - Math.max(curSelectedPos, 0));
+            selectPos = Math.max(selectPos, 0);
         } else {
             mText.setText(mDisplayedValues[mCurrent - mStart]);
+            selectPos = mText.getText().length();
         }
-        mText.setSelection(mText.getText().length());
+        mText.setSelection(selectPos);
     }
 
     private static int constrain(int x, int min, int max) {
