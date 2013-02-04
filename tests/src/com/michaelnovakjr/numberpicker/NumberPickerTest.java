@@ -42,7 +42,7 @@ public class NumberPickerTest extends AndroidTestCase {
 
     public void testRangeBounds() {
         mNumberPicker.setRange(1, 4);
-        
+
         try {
             mNumberPicker.setCurrent(5);
             fail("Did not throw illegal argument exception for current greater than range end.");
@@ -57,7 +57,7 @@ public class NumberPickerTest extends AndroidTestCase {
         mNumberPicker.changeCurrent(current + 2);
         assertEquals(mNumberPicker.getCurrent(), current + 2);
     }
-    
+
     public void testNumberFormatter() {
         mNumberPicker.setFormatter(NumberPicker.TWO_DIGIT_FORMATTER);
 

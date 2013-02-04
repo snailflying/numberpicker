@@ -43,7 +43,6 @@ public class NumberPickerSample extends Activity implements NumberPickerDialog.O
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_dialog_item) {
             NumberPickerDialog dialog = new NumberPickerDialog(this, -1, 5);
-            dialog.setTitle(getString(R.string.dialog_picker_title));
             dialog.setOnNumberSetListener(this);
             dialog.show();
 
@@ -56,6 +55,7 @@ public class NumberPickerSample extends Activity implements NumberPickerDialog.O
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void onNumberSet(int number) {
         Log.d(TAG, "Number selected: " + number);
     }

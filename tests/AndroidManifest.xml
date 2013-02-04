@@ -5,7 +5,13 @@
           android:versionCode="1"
           android:versionName="1.0">
 
-    <application>
+    <uses-sdk
+        android:minSdkVersion="3"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application android:allowBackup="false">
         <uses-library android:name="android.test.runner" />
     </application>
 
