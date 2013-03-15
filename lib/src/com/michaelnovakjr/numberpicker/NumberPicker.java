@@ -224,7 +224,11 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         if (end < start) throw new IllegalArgumentException("End value cannot be less than the start value.");
         mStart = start;
         mEnd = end;
-        mCurrent = start;
+        if (mCurrent < start) {
+            mCurrent = start;
+        } else if (mCurrent > end) {
+            mCurrent = end;
+        }
         mNumMaxDigitChars = Integer.toString(Math.max(Math.abs(mStart), Math.abs(mEnd))).length();
         updateTextInputType();
     }
