@@ -87,7 +87,7 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
     public void setRange(int start, int end, String[] displayedValues) {
         mNumberPicker.setRange(start, end, displayedValues);
     }
- 
+
     public void setOnNumberSetListener(OnNumberSetListener listener) {
         mListener = listener;
     }
