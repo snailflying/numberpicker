@@ -44,14 +44,46 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
         mNumberPicker.setCurrent(mInitialValue);
     }
 
+    /**
+     * Retrieve the number picker used in the dialog
+     */
+    public NumberPicker getNumberPicker() {
+        return mNumberPicker;
+    }
+
+    /**
+     * Set the range allowed for the number picker
+     * @param start the minimum allowed value
+     * @param end the maximum allowed value
+     * @deprecated Instead this can be set by retrieving the numberpicker
+     * and setting the value directly.
+     */
+    @Deprecated
     public void setRange(int start, int end) {
         mNumberPicker.setRange(start, end);
     }
 
+    /**
+     * Set the wrap option for the number picker
+     * @param wrap true if values need to wrap
+     * @deprecated Instead this can be set by retrieving the numberpicker
+     * and setting the value directly.
+     */
+    @Deprecated
     public void setWrap(boolean wrap) {
         mNumberPicker.setWrap(wrap);
     }
 
+    /**
+     * Set the range for the number picker and the values to display
+     * @param start the minimum allowed value
+     * @param end the maximum allowed value
+     * @param displayedValues values to display in the numberpicker instead of
+     * the integer values of the range
+     * @deprecated Instead this can be set by retrieving the numberpicker
+     * and setting the value directly.
+     */
+    @Deprecated
     public void setRange(int start, int end, String[] displayedValues) {
         mNumberPicker.setRange(start, end, displayedValues);
     }
