@@ -95,6 +95,7 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (mListener != null) {
+            mNumberPicker.clearFocus();
             mListener.onNumberSet(mNumberPicker.getCurrent());
         }
     }
