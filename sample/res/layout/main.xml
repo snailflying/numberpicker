@@ -2,11 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:text="@string/app_message"
-    />
+    android:layout_height="fill_parent" >
+
+    <TextView
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+    	android:text="@string/app_message" />
+    
+  	<com.michaelnovakjr.numberpicker.NumberPicker
+	    xmlns:picker="http://schemas.android.com/apk/res-auto"
+	    android:layout_marginTop="100dp"
+        android:id="@+id/num_picker_step"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        style="@style/myStyleStep"
+        picker:startRange="0"
+        picker:endRange="45"
+        picker:step="15" />
+  	
 </LinearLayout>
