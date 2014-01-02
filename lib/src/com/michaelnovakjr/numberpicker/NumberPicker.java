@@ -48,6 +48,7 @@ import java.util.Locale;
 public class NumberPicker extends LinearLayout implements OnClickListener,
         OnEditorActionListener, OnFocusChangeListener, OnLongClickListener {
 
+	private static final int DEFAULT_STEP = 1;
     private static final int DEFAULT_MAX = 200;
     private static final int DEFAULT_MIN = 0;
     private static final int DEFAULT_VALUE = 0;
@@ -86,10 +87,10 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         @Override
         public void run() {
             if (mIncrement) {
-                changeCurrent(mCurrent + 1);
+                changeCurrent(mCurrent + mStep);
                 mHandler.postDelayed(this, mSpeed);
             } else if (mDecrement) {
-                changeCurrent(mCurrent - 1);
+                changeCurrent(mCurrent - mStep);
                 mHandler.postDelayed(this, mSpeed);
             }
         }
@@ -106,6 +107,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
     protected OnChangedListener mListener;
     protected Formatter mFormatter;
     protected boolean mWrap;
+    protected int mStep;
     protected long mSpeed = 300;
     private int mNumMaxDigitChars; 
 
@@ -137,11 +139,6 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         mDecrementButton.setOnLongClickListener(this);
         mDecrementButton.setNumberPicker(this);
 
-        mText = (EditText) findViewById(R.id.numpicker_input);
-        mText.setOnFocusChangeListener(this);
-        mText.setOnEditorActionListener(this);
-        mText.setFilters(new InputFilter[] {inputFilter});
-
         if (!isEnabled()) {
             setEnabled(false);
         }
@@ -150,6 +147,7 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
         
         mWrap = a.getBoolean( R.styleable.numberpicker_wrap, DEFAULT_WRAP );
         
+        mStep = a.getInt( R.styleable.numberpicker_step, DEFAULT_STEP );
         int start = a.getInt( R.styleable.numberpicker_startRange, DEFAULT_MIN );
         int end = a.getInt( R.styleable.numberpicker_endRange, DEFAULT_MAX );
         int current = a.getInt( R.styleable.numberpicker_defaultValue, DEFAULT_VALUE );
@@ -162,6 +160,16 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
             start = end;
             end = t;
         }
+        
+        mText = (EditText) findViewById(R.id.numpicker_input);
+        if(1 == mStep){
+	        mText.setOnFocusChangeListener(this);
+	        mText.setOnEditorActionListener(this);
+        } else { // Unable to choice a cutom number
+        	mText.setEnabled(false);
+        }
+        mText.setFilters(new InputFilter[] {inputFilter});
+        
         setRangeInternal(start, end);
         setCurrentInternal(constrain(current, start, end));
         updateTextInputType();
@@ -276,9 +284,9 @@ public class NumberPicker extends LinearLayout implements OnClickListener,
 
         // now perform the increment/decrement
         if (R.id.increment == v.getId()) {
-            changeCurrent(mCurrent + 1);
+            changeCurrent(mCurrent + mStep);
         } else if (R.id.decrement == v.getId()) {
-            changeCurrent(mCurrent - 1);
+            changeCurrent(mCurrent - mStep);
         }
     }
 
