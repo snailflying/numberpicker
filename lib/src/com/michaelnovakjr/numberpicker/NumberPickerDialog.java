@@ -28,13 +28,14 @@ public class NumberPickerDialog extends AlertDialog implements OnClickListener {
 
     private int mInitialValue;
 
-    public NumberPickerDialog(Context context, int theme, int initialValue) {
+    public NumberPickerDialog(Context context, int theme, int initialValue,
+            CharSequence title, CharSequence positive, CharSequence negative) {
         super(context, theme);
         mInitialValue = initialValue;
 
-        setButton(BUTTON_POSITIVE, context.getText(R.string.dialog_set_number), this);
-        setButton(BUTTON_NEGATIVE, context.getText(R.string.dialog_cancel), (OnClickListener) null);
-        setTitle(context.getText(R.string.dialog_picker_title));
+        setTitle(title);
+        setButton(BUTTON_POSITIVE, positive, this);
+        setButton(BUTTON_NEGATIVE, negative, (OnClickListener) null);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.dialog_number_picker, null);
